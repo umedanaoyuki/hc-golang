@@ -14,9 +14,10 @@ func main() {
 		{"itirou", 11},
 	}
 
-	for _, user := range users {
-		user.Age = 44
+	for i, _ := range users {
+		// rangeの中でusersの要素を変更して、もとのusersも変更させる
+		users[i].Age = 44
 	}
 
-	fmt.Printf("%v", users) // どうなる？
+	fmt.Printf("%v", users)
 }
