@@ -21,8 +21,9 @@ func main() {
 	  3: "03",
 	}
 
+    // ここの記述のコメントアウトを有効＆解除することででバック可能
 	key, err := findKeyByValue(m, "03")
-	key, err := findKeyByValue(m, "05")
+	// key, err := findKeyByValue(m, "05")
 	if err != nil {
 		fmt.Println(key, err)
 	} else {
