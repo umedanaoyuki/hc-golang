@@ -9,6 +9,7 @@ type Config struct {
 }
 
 func getConfig() *Config {
+	// appConfigのメモリアドレスを返す
 	return &appConfig
 }
 
