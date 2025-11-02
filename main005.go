@@ -8,8 +8,8 @@ type Config struct {
 	Env string
 }
 
-func getConfig() Config {
-	return appConfig
+func getConfig() *Config {
+	return &appConfig
 }
 
 func main() {
