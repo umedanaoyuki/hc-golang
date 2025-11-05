@@ -97,5 +97,6 @@ func main() {
 	}
 
 	defer db.Close()
+	fmt.Println("データベース接続を終了")
 
 }
