@@ -17,6 +17,9 @@ type User struct {
 	Role string `json:"role"`
 }
 
+/**
+  ログデータの構造体
+*/
 type LogData struct {
 	User User `json:"user"`
 	Dist string `json:"dist"`
@@ -29,18 +32,14 @@ type LogData struct {
  var logDatas LogData
 
 func insertData(db *sql.DB, logDatas LogData) {
-
-	fmt.Println("logDatasの中身", logDatas)
-
 	for _, logData := range []LogData{logDatas} {
 		_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
-		log.Println("データ挿入成功", logData)
-	if err != nil {
-		log.Fatal("データ挿入失敗", err)
-	}	
+		// log.Println("データ挿入成功", logData)
+			if err != nil {
+				log.Fatal("データ挿入失敗", err)
+			}	
 	}
-	
-	fmt.Println("データ挿入成功")
+	// fmt.Println("データ挿入成功")
 }
 
 
@@ -55,22 +54,25 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("ファイル読み取り処理を開始します")
+	// fmt.Println("ファイル読み取り処理を開始します")
 	// ファイルをOpenする
 	logFile, err := os.Open(args[1])
 	// 読み取り時の例外処理
 	if err != nil {
-		fmt.Println("error")
+		fmt.Println("うまくファイルを読み取れませんでした", err)
+		os.Exit(1)
 	}
 
 	file , err := os.Open(logFile.Name())
 	if err != nil {
 		log.Fatal("ファイルを開けませんでした", err)
+		os.Exit(1)
 	}
 
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
+	// DB接続情報
 	connectInfo := "user=test-user password=test-pass dbname=users sslmode=disable"
 
 	db, err := sql.Open("postgres", connectInfo)
@@ -88,7 +90,7 @@ func main() {
 			continue
 		}
 		// %+v を使用するとフィールド名も表示される
-		fmt.Printf("%+v\n", logDatas)
+		// fmt.Printf("%+v\n", logDatas)
 		// DB操作
 		insertData(db, logDatas)
 	}
