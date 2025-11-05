@@ -81,9 +81,9 @@ func main() {
 	// 関数が終了した際に確実に閉じるようにする
 	// defer file.Close()
 
-	connStr := "user=test-user password=test-pass dbname=users sslmode=disable"
+	connectInfo := "user=test-user password=test-pass dbname=users sslmode=disable"
 
-	db, err := sql.Open("postgres", connStr)
+	db, err := sql.Open("postgres", connectInfo)
 	if err != nil {
 		log.Fatalln("接続失敗", err)
 	}
