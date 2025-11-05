@@ -29,10 +29,17 @@ type LogData struct {
  var logDatas LogData
 
 func insertData(db *sql.DB, logDatas LogData) {
-	_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logDatas.User.Age, logDatas.User.Name, logDatas.User.Role)
+
+	fmt.Println("logDatasの中身", logDatas)
+
+	for _, logData := range []LogData{logDatas} {
+		_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
+		log.Println("データ挿入成功", logData)
 	if err != nil {
 		log.Fatal("データ挿入失敗", err)
+	}	
 	}
+	
 	fmt.Println("データ挿入成功")
 }
 
@@ -64,6 +71,12 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
+	connectInfo := "user=test-user password=test-pass dbname=users sslmode=disable"
+
+	db, err := sql.Open("postgres", connectInfo)
+	if err != nil {
+		log.Fatalln("接続失敗", err)
+	}
 		
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -76,19 +89,15 @@ func main() {
 		}
 		// %+v を使用するとフィールド名も表示される
 		fmt.Printf("%+v\n", logDatas)
+		// DB操作
+		insertData(db, logDatas)
 	}
 
 	// 関数が終了した際に確実に閉じるようにする
 	// defer file.Close()
 
-	connectInfo := "user=test-user password=test-pass dbname=users sslmode=disable"
 
-	db, err := sql.Open("postgres", connectInfo)
-	if err != nil {
-		log.Fatalln("接続失敗", err)
-	}
-
-	insertData(db, logDatas)
+	
 	defer db.Close()
 	fmt.Println("データベース接続成功")
 
