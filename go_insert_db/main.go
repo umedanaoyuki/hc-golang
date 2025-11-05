@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -20,25 +21,27 @@ import (
 // 	"time": "2021-08-01T00:05:05Z"
   
 type User struct {
-	age int
-	name string
-	role string
+	Age int `json:"age"`
+	Name string `json:"name"`
+	Role string `json:"role"`
 }
 
 type LogData struct {
-	user User
-	dist string
-	level string
-	msg string
-	src string
-	time string
+	User User `json:"user"`
+	Dist string `json:"dist"`
+	Level string `json:"level"`
+	Msg string `json:"msg"`
+	Src string `json:"src"`
+	Time string `json:"time"`
  }
 
- type Person struct {
-	Name   string
-	Age    int
-	gender string
-}
+//  type Person struct {
+// 	Name   string
+// 	Age    int
+// 	gender string
+// }
+
+// var logDatas []LogData
 
 func main() {
 	//実行時に引数を受け取る
@@ -80,10 +83,38 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		// テキスト一行ごとの処理		
-		fmt.Println(line)
+		// fmt.Println(line)
+
+		var logDatas LogData
+		if err := json.Unmarshal([]byte(line), &logDatas); 
+		err != nil {
+			log.Printf("JSONパースエラー: %v", err)
+			continue
+		}
+		// %+v を使用するとフィールド名も表示される
+		fmt.Printf("%+v\n", logDatas)
+		// type LogData struct {
+		// 	user User
+		// 	dist string
+		// 	level string
+		// 	msg string
+		// 	src string
+		// 	time string
+		//  }
+
+		// entry := LogData{
+		// 	user: User{
+		// 		age: line["user"].age,
+		// 		name: line["user"].name,
+		// 		role: line["user"].role,
+		// 	},
+		// 	dist: line["dist"],
+		// 	level: line["level"].(string),
+		// 	msg: line["msg"].(string),
+		// 	src: line["src"].(string),
+		// 	time: line["time"].(string),
+		// }
 	}
-
-
 	// }
 	// err = scanner.Err()   
 	// if err != nil {
