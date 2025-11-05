@@ -50,7 +50,7 @@ func main() {
 	// ファイルは一つだけと限定する
 	if len(args) != 2 {
 		fmt.Println("引数の数が間違っています")
-		// プロセス終了（失敗）
+		// プロセス終了
 		os.Exit(1)
 	}
 
@@ -79,6 +79,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("接続失敗", err)
 	}
+	fmt.Println("データベース接続成功")
 		
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -95,12 +96,6 @@ func main() {
 		insertData(db, logDatas)
 	}
 
-	// 関数が終了した際に確実に閉じるようにする
-	// defer file.Close()
-
-
-	
 	defer db.Close()
-	fmt.Println("データベース接続成功")
 
 }
