@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -42,21 +43,21 @@ type LogData struct {
 func main() {
 	//実行時に引数を受け取る
 	// ファイル名の指定
-	//args := os.Args
+	args := os.Args
 	// ファイルは一つだけと限定する
-	// if len(args) != 2 {
-	// 	fmt.Println("引数の数が間違っています")
-	// 	// プロセス終了（失敗）
-	// 	os.Exit(1)
-	// }
+	if len(args) != 2 {
+		fmt.Println("引数の数が間違っています")
+		// プロセス終了（失敗）
+		os.Exit(1)
+	}
 
 	fmt.Println("ファイル読み取り処理を開始します")
 	// ファイルをOpenする
-	// f, err := os.Open(args[1])
+	logFile, err := os.Open(args[1])
 	// 読み取り時の例外処理
-	// if err != nil {
-	// 	fmt.Println("error")
-	// }
+	if err != nil {
+		fmt.Println("error")
+	}
 
 	// p := Person{
 	// 	Name: "Mike",
@@ -64,19 +65,32 @@ func main() {
 	// 	gender: "male",
 	// }
 
-	file , err := os.Open("sample.log")
-	scanner := bufio.NewScanner(file)  // スキャナ型を作成
-	for scanner.Scan() {                // テキスト行がなくなるまで、ループする
-		line := scanner.Text()          // テキスト １行を読み取る
-		// テキスト一行ごとの処理
+	file , err := os.Open(logFile.Name())
+	// scanner := bufio.NewScanner(file)
+	if err != nil {
+		log.Fatal("ファイルを開けませんでした", err)
+	}
+
+	// fmt.Println(file)
+
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+		
+	for scanner.Scan() {
+		line := scanner.Text()
+		// テキスト一行ごとの処理		
 		fmt.Println(line)
 	}
-	err = scanner.Err()   
-	if err != nil {
-		fmt.Println("error")
-		// プロセス終了（失敗）
-		os.Exit(1)
-	}
+
+
+	// }
+	// err = scanner.Err()   
+	// if err != nil {
+	// 	fmt.Println("error")
+	// 	// プロセス終了（失敗）
+	// 	os.Exit(1)
+	// }
 
 	// m, _ := json.Marshal(p)
 	// fmt.Println(string(m))
