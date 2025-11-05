@@ -3,7 +3,7 @@ services:
     image: postgres:14.2
     container_name: postgres_container
     environment:
-      POSTGRES_DB: test-db
+      POSTGRES_DB: users
       POSTGRES_USER: test-user
       POSTGRES_PASSWORD: test-pass
     volumes:
