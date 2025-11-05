@@ -49,7 +49,7 @@ func main() {
 	args := os.Args
 	// ファイルは一つだけと限定する
 	if len(args) != 2 {
-		fmt.Println("引数の数が間違っています")
+		fmt.Println("引数が間違っています。3つ以上のファイルは読み込めません。")
 		// プロセス終了
 		os.Exit(1)
 	}
