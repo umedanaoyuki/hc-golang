@@ -12,6 +12,7 @@ func main() {
 	// ファイルは一つだけと限定する
 	if len(args) != 2 {
 		fmt.Println("引数の数が間違っています")
+		// プロセス終了（失敗）
 		os.Exit(1)
 	}
 
