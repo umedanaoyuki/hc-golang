@@ -1,8 +1,9 @@
 package main
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
+	"os"
 )
 
 //  {
@@ -57,14 +58,26 @@ func main() {
 	// 	fmt.Println("error")
 	// }
 
-	p := Person{
-		Name: "Mike",
-		Age:  20,
-		gender: "male",
+	// p := Person{
+	// 	Name: "Mike",
+	// 	Age:  20,
+	// 	gender: "male",
+	// }
+
+	file , err := os.Open("sample.log")
+	scanner := bufio.NewScanner(file)  // スキャナ型を作成
+	for scanner.Scan() {                // テキスト行がなくなるまで、ループする
+		line := scanner.Text()          // テキスト １行を読み取る
+		// テキスト一行ごとの処理
+		fmt.Println(line)
+	}
+	err = scanner.Err()   
+	if err != nil {
+		fmt.Println("error")
 	}
 
-	m, _ := json.Marshal(p)
-	fmt.Println(string(m))
+	// m, _ := json.Marshal(p)
+	// fmt.Println(string(m))
 
 	// 関数が終了した際に確実に閉じるようにする
 	// defer f.Close()
