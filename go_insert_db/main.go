@@ -74,11 +74,13 @@ func main() {
 	err = scanner.Err()   
 	if err != nil {
 		fmt.Println("error")
+		// プロセス終了（失敗）
+		os.Exit(1)
 	}
 
 	// m, _ := json.Marshal(p)
 	// fmt.Println(string(m))
 
 	// 関数が終了した際に確実に閉じるようにする
-	// defer f.Close()
+	defer file.Close()
 }
