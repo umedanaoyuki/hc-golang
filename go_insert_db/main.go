@@ -26,6 +26,17 @@ type LogData struct {
 	Time string `json:"time"`
  }
 
+ var logDatas LogData
+
+func insertData(db *sql.DB, logDatas LogData) {
+	_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logDatas.User.Age, logDatas.User.Name, logDatas.User.Role)
+	if err != nil {
+		log.Fatal("データ挿入失敗", err)
+	}
+	fmt.Println("データ挿入成功")
+}
+
+
 func main() {
 	//実行時に引数を受け取る
 	// ファイル名の指定
@@ -58,8 +69,6 @@ func main() {
 		line := scanner.Text()
 		// テキスト一行ごとの処理		
 		// fmt.Println(line)
-
-		var logDatas LogData
 		if err := json.Unmarshal([]byte(line), &logDatas); 
 		err != nil {
 			log.Printf("JSONパースエラー: %v", err)
@@ -70,7 +79,7 @@ func main() {
 	}
 
 	// 関数が終了した際に確実に閉じるようにする
-	defer file.Close()
+	// defer file.Close()
 
 	connStr := "user=test-user password=test-pass dbname=users sslmode=disable"
 
@@ -78,6 +87,9 @@ func main() {
 	if err != nil {
 		log.Fatalln("接続失敗", err)
 	}
+
+	insertData(db, logDatas)
 	defer db.Close()
 	fmt.Println("データベース接続成功")
+
 }
