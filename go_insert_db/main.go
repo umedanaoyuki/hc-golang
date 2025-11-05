@@ -2,10 +2,13 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
   
 type User struct {
@@ -68,4 +71,13 @@ func main() {
 
 	// 関数が終了した際に確実に閉じるようにする
 	defer file.Close()
+
+	connStr := "user=test-user password=test-pass dbname=users sslmode=disable"
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		log.Fatalln("接続失敗", err)
+	}
+	defer db.Close()
+	fmt.Println("データベース接続成功")
 }
