@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -31,7 +32,21 @@ type LogData struct {
 
  var logDatas LogData
 
-func insertData(db *sql.DB, logDatas LogData) {
+func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
+
+	// Create a helper function for preparing failure results.
+    fail := func(err error) error {
+        return fmt.Errorf("Error", err)
+    }
+
+    // Get a Tx for making transaction requests.
+    tx, err := db.BeginTx(ctx, nil)
+    if err != nil {
+        return fail(err)
+    }
+
+	defer tx.Rollback()
+
 	for _, logData := range []LogData{logDatas} {
 		_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
 		// log.Println("データ挿入成功", logData)
@@ -39,7 +54,17 @@ func insertData(db *sql.DB, logDatas LogData) {
 				log.Fatal("データ挿入失敗", err)
 			}	
 	}
+
+	if err = tx.Commit(); err != nil {
+        return fail(err)
+    }
 	// fmt.Println("データ挿入成功")
+
+	// Commit the transaction.
+    if err = tx.Commit(); err != nil {
+        return fail(err)
+    }
+	return nil
 }
 
 
@@ -93,7 +118,7 @@ func main() {
 		// %+v を使用するとフィールド名も表示される
 		// fmt.Printf("%+v\n", logDatas)
 		// DB操作
-		insertData(db, logDatas)
+		insertData(context.Background(),db, logDatas)
 	}
 
 	defer db.Close()
