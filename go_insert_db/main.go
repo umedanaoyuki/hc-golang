@@ -118,7 +118,8 @@ func main() {
 		// %+v を使用するとフィールド名も表示される
 		// fmt.Printf("%+v\n", logDatas)
 		// DB操作
-		insertData(context.Background(),db, logDatas)
+		ctx := context.Background()
+		insertData(ctx,db, logDatas)
 	}
 
 	defer db.Close()
