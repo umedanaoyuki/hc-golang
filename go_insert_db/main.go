@@ -29,21 +29,8 @@ type LogData struct {
 	Src string `json:"src"`
 	Time string `json:"time"`
  }
-
-func insertData(ctx context.Context, db *sql.DB, logData LogData) (err error) {
-
-	// Create a helper function for preparing failure results.
-    fail := func(err error) error {
-        return fmt.Errorf("error %w", err)
-    }
-
-    // Get a Tx for making transaction requests.
-    tx, err := db.BeginTx(ctx, nil)
-    if err != nil {
-        return fail(err)
-    }
-
-	defer tx.Rollback()
+ 
+func insertData(ctx context.Context, db *sql.DB, logData LogData, tx *sql.Tx) (err error) {
 
 	for _, logData := range []LogData{logData} {
 		_, err := db.ExecContext(ctx,"INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
@@ -54,6 +41,9 @@ func insertData(ctx context.Context, db *sql.DB, logData LogData) (err error) {
 	}
 
 	// fmt.Println("データ挿入成功")
+	fail := func(err error) error {
+		return fmt.Errorf("error %w", err)
+	}
 
 	// Commit the transaction.
     if err = tx.Commit(); err != nil {
@@ -109,7 +99,14 @@ func main() {
 		// fmt.Printf("%+v\n", logData)
 		// DB操作
 		ctx := context.Background()
-		insertData(ctx,db, logData)
+		tx, err := db.BeginTx(ctx, nil)
+		if err != nil {
+			log.Printf("error: %v", err)
+			continue
+		}
+	
+		defer tx.Rollback()
+		insertData(ctx,db, logData, tx)
 	}
 
 	defer db.Close()
