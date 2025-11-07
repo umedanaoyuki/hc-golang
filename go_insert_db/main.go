@@ -80,6 +80,16 @@ func main() {
 		log.Fatalln("接続失敗", err)
 	}
 	fmt.Println("データベース接続成功")
+
+	// %+v を使用するとフィールド名も表示される
+	// DB操作
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Printf("error: %v", err)
+	}
+	
+	defer tx.Rollback()
 		
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -90,16 +100,6 @@ func main() {
 			log.Printf("JSONパースエラー: %v", err)
 			continue
 		}
-		// %+v を使用するとフィールド名も表示される
-		// DB操作
-		ctx := context.Background()
-		tx, err := db.BeginTx(ctx, nil)
-		if err != nil {
-			log.Printf("error: %v", err)
-			continue
-		}
-	
-		defer tx.Rollback()
 		insertData(ctx,db, logData, tx)
 	}
 
