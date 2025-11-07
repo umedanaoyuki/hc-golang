@@ -29,23 +29,20 @@ type LogData struct {
 	Src string `json:"src"`
 	Time string `json:"time"`
  }
- 
+
 func insertData(ctx context.Context, db *sql.DB, logData LogData, tx *sql.Tx) (err error) {
 
 	for _, logData := range []LogData{logData} {
 		_, err := db.ExecContext(ctx,"INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
-		// log.Println("データ挿入成功", logData)
 			if err != nil {
 				log.Fatal("データ挿入失敗", err)
 			}	
 	}
 
-	// fmt.Println("データ挿入成功")
 	fail := func(err error) error {
 		return fmt.Errorf("error %w", err)
 	}
 
-	// Commit the transaction.
     if err = tx.Commit(); err != nil {
         return fail(err)
     }
@@ -54,7 +51,7 @@ func insertData(ctx context.Context, db *sql.DB, logData LogData, tx *sql.Tx) (e
 
 
 func main() {
-	//実行時に引数を受け取る
+	// 実行時に引数を受け取る
 	// ファイル名の指定
 	args := os.Args
 	// ファイルは一つだけと限定する
@@ -64,7 +61,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	// fmt.Println("ファイル読み取り処理を開始します")
 	// ファイルをOpenする
 	logFile, err := os.Open(args[1])
 	// 読み取り時の例外処理
@@ -88,7 +84,6 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		// テキスト一行ごとの処理		
-		// fmt.Println(line)
 		var logData LogData
 		if err := json.Unmarshal([]byte(line), &logData); 
 		err != nil {
@@ -96,7 +91,6 @@ func main() {
 			continue
 		}
 		// %+v を使用するとフィールド名も表示される
-		// fmt.Printf("%+v\n", logData)
 		// DB操作
 		ctx := context.Background()
 		tx, err := db.BeginTx(ctx, nil)
