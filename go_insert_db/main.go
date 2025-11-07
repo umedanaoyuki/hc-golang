@@ -36,7 +36,7 @@ func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
 
 	// Create a helper function for preparing failure results.
     fail := func(err error) error {
-        return fmt.Errorf("Error", err)
+        return fmt.Errorf("Error %w", err)
     }
 
     // Get a Tx for making transaction requests.
