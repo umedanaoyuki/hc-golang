@@ -30,7 +30,7 @@ type LogData struct {
 	Time string `json:"time"`
  }
 
-func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
+func insertData(ctx context.Context, db *sql.DB, logData LogData) (err error) {
 
 	// Create a helper function for preparing failure results.
     fail := func(err error) error {
@@ -45,8 +45,8 @@ func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
 
 	defer tx.Rollback()
 
-	for _, logData := range []LogData{logDatas} {
-		_, err := db.Exec("INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
+	for _, logData := range []LogData{logData} {
+		_, err := db.ExecContext(ctx,"INSERT INTO users (age, name, role) VALUES ($1, $2, $3)", logData.User.Age, logData.User.Name, logData.User.Role)
 		// log.Println("データ挿入成功", logData)
 			if err != nil {
 				log.Fatal("データ挿入失敗", err)
@@ -99,17 +99,17 @@ func main() {
 		line := scanner.Text()
 		// テキスト一行ごとの処理		
 		// fmt.Println(line)
-		var logDatas LogData
-		if err := json.Unmarshal([]byte(line), &logDatas); 
+		var logData LogData
+		if err := json.Unmarshal([]byte(line), &logData); 
 		err != nil {
 			log.Printf("JSONパースエラー: %v", err)
 			continue
 		}
 		// %+v を使用するとフィールド名も表示される
-		// fmt.Printf("%+v\n", logDatas)
+		// fmt.Printf("%+v\n", logData)
 		// DB操作
 		ctx := context.Background()
-		insertData(ctx,db, logDatas)
+		insertData(ctx,db, logData)
 	}
 
 	defer db.Close()
