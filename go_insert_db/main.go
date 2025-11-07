@@ -30,8 +30,6 @@ type LogData struct {
 	Time string `json:"time"`
  }
 
- var logDatas LogData
-
 func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
 
 	// Create a helper function for preparing failure results.
@@ -110,6 +108,7 @@ func main() {
 		line := scanner.Text()
 		// テキスト一行ごとの処理		
 		// fmt.Println(line)
+		var logDatas LogData
 		if err := json.Unmarshal([]byte(line), &logDatas); 
 		err != nil {
 			log.Printf("JSONパースエラー: %v", err)
