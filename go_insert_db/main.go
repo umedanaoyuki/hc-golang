@@ -34,7 +34,7 @@ func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
 
 	// Create a helper function for preparing failure results.
     fail := func(err error) error {
-        return fmt.Errorf("Error %w", err)
+        return fmt.Errorf("error %w", err)
     }
 
     // Get a Tx for making transaction requests.
@@ -53,9 +53,6 @@ func insertData(ctx context.Context, db *sql.DB, logDatas LogData) (err error) {
 			}	
 	}
 
-	if err = tx.Commit(); err != nil {
-        return fail(err)
-    }
 	// fmt.Println("データ挿入成功")
 
 	// Commit the transaction.
