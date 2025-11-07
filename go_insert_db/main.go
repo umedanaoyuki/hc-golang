@@ -83,15 +83,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	file , err := os.Open(logFile.Name())
-	if err != nil {
-		log.Fatal("ファイルを開けませんでした", err)
-		os.Exit(1)
-	}
+	defer logFile.Close()
 
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(logFile)
 	// DB接続情報
 	connectInfo := "user=test-user password=test-pass dbname=users sslmode=disable"
 
